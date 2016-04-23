@@ -11,9 +11,10 @@ from bs4 import BeautifulSoup
 import requests
 import csv, re
 import time
+import lxml
+import random
 
-
-f = open('wiki_sp.csv', 'w')
+f = open('spValue.csv', 'w')
 outfile = csv.writer(f)
 
 
@@ -27,7 +28,7 @@ table = soup.findAll('table')
 rows = table[0].findAll('tr')
 
 header = [i.text for i in table[0].findAll('th')]
-outfile.writerow(header)
+outfile.writerow(header + ['Price', 'Book Value Per Share', 'Diluted EPS ttm'])
 
 for r in rows[1:]:
     my_row = [ i.text for i in r.findAll('td') ]
@@ -35,14 +36,21 @@ for r in rows[1:]:
     print (my_row)
     '''
     ticker = my_row[0]
+    print ('Processing'+ticker)
     try:
-        time.sleep(1)
+      
         res = requests.get('http://finance.yahoo.com/q/ks?s='+ticker+'+Key+Statistics')
         soup = BeautifulSoup(res.text, 'html.parser')
-        price = soup.find('span', {'class':'time_rtq_ticker'})
+        price = soup.find('span', {'class':'time_rtq_ticker'})  #find the price
+        book = soup.find('td', text='Book Value Per Share (mrq):').parent.find('td', attrs={'class': 'yfnc_tabledata1'}) #find the Book Value Per Share (mrq) 
+        eps = soup.find('td', text='Diluted EPS (ttm):').parent.find('td', attrs={'class': 'yfnc_tabledata1'})  #find the Diluted EPS (ttm)        
         
+        '''
         table = soup.find('td', {'class':'yfnc_modtitlew1'})
         table = table.text.strip()
+       
+        //*[@id="yui_3_9_1_8_1461218085350_49"] ->xpath selector for diluted EPS
+        '''
         
         
         
@@ -51,6 +59,8 @@ for r in rows[1:]:
         
         
         my_row.append(price.text.strip())
+        my_row.append(book.text.strip())
+        my_row.append(eps.text.strip())
         
         
         
