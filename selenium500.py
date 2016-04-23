@@ -18,13 +18,33 @@ driver.wait = WebDriverWait(driver, 10)
 driver.get('http://www.msn.com/en-us/money')
 
 txtbox = driver.wait.until(EC.presence_of_element_located((By.ID, 'finance-autosuggest')))
-txtbox.send_keys('STZ')
+
+txtbox.send_keys('AAPL')
 
 txtbox.send_keys(Keys.RETURN)
 
-price = driver.wait.until(EC.presence_of_element_located((By.CLASSNAME, 'current-price'))).getText()
+price = driver.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'current-price'))).text
 print (price)
 
-time.sleep(10)
+financialurl = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="financials"]/a'))).get_attribute('href')
+financailurl = 'http://www.msn.com/'+financialurl
+
+driver.get (financialurl)
+
+yr_eps = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p'))).text
+
+#qrt_tab = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@class="financials-period-list"]/li[2]'))).click()
+
+#//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p
+#financials-period-list > li.financials-period-tabs.pointer.active
+driver.execute_script('document.getElementsByClassName("financials-period-tabs").setAttribute("class", "active")')
+qrt_eps = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p'))).text
+print (yr_eps)
+print (qtr_eps)
+
+time.sleep(20)
+
+
 
 driver.close()
+
