@@ -77,12 +77,24 @@ def get_codename(ticker):
     code = currenturl[-2]+'.'+currenturl[-1]
     return code
     
+def ann_eps_msn(code):
+    res = requests.get('http://www.msn.com/en-us/money/stockdetailsvnext/financials/income_statement/annual/fi-126.1.'+code+'?ver=2.0.5942.29746')
+    soup = BeautifulSoup(res.text, 'html.parser')
+    msn_yr_eps = soup.find('div', {'class':'table-data-rows'}).findAll('ul')[27].findAll('li')[-1].find('p').text
+    return msn_yr_eps
+    
+def qtr_eps_msn(code):
+    res = requests.get('http://www.msn.com/en-us/money/stockdetailsvnext/financials/income_statement/quarterly/fi-126.1.'+code+'?ver=2.0.5942.29746')
+    soup = BeautifulSoup(res.text, 'html.parser')
+    msn_qtr_eps = soup.find('div', {'class':'table-data-rows'}).findAll('ul')[27].findAll('li')[-1].find('p').text
+    return msn_qtr_eps
 
-    
-    
-    
-            
-
+def book_msn(code):
+    res = requests.get('http://www.msn.com/en-us/money/stockdetails/analysis/fi-126.1.'+code)
+    soup = BeautifulSoup(res.text, 'html.parser')
+    msn_book = soup.findAll('div', {'class':'table-data-rows'})[1].findAll('ul')[5].findAll('li')[-1].find('p').text
+    return (msn_book)   
+   
 f = open('spValue.csv', 'w')
 outfile = csv.writer(f)
 
@@ -107,9 +119,12 @@ for r in rows[1:]:
     ticker = my_row[0]
     print ('Processing'+ticker)
     
+    
+    
     #code = get_code(ticker)
-    #msn_url1 = http://www.ticker.com
-    #msn_url2 = http://www.ticker.com
+    
+    #msn_qtr_eps = qtr_eps_msn(code)
+
     
     
     
@@ -127,6 +142,8 @@ for r in rows[1:]:
     my_row.append(fwdyr)  #my_row + output
         
     outfile.writerow(my_row)
+    
+    time.sleep(3)
 
     
 
