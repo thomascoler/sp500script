@@ -31,7 +31,7 @@ price = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'current-price
 
 
 financialurl = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="financials"]/a'))).get_attribute('href')
-financailurl = 'http://www.msn.com/'+financialurl
+financialurl = 'http://www.msn.com/'+financialurl
 
 driver.get (financialurl)
 
