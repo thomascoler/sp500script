@@ -13,36 +13,43 @@ from selenium.common.exceptions import *
 from selenium.webdriver.common.keys import Keys
 import time
 
+
+
 driver = webdriver.Firefox()
-driver.wait = WebDriverWait(driver, 10)
+driver.maximize_window()
+wait = WebDriverWait(driver, 3)
 driver.get('http://www.msn.com/en-us/money')
 
-txtbox = driver.wait.until(EC.presence_of_element_located((By.ID, 'finance-autosuggest')))
+txtbox = wait.until(EC.presence_of_element_located((By.ID, 'finance-autosuggest')))
 
-txtbox.send_keys('AAPL')
+txtbox.send_keys('AAPL')  #ticker symbol
+
 
 txtbox.send_keys(Keys.RETURN)
 
-price = driver.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'current-price'))).text
-print (price)
+price = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'current-price'))).text
 
-financialurl = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="financials"]/a'))).get_attribute('href')
+
+financialurl = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="financials"]/a'))).get_attribute('href')
 financailurl = 'http://www.msn.com/'+financialurl
 
 driver.get (financialurl)
 
-yr_eps = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p'))).text
+yr_eps = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p'))).get_attribute('innerHTML')
 
-#qrt_tab = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@class="financials-period-list"]/li[2]'))).click()
 
+qtrtab = wait.until(EC.element_to_be_clickable((By.XPATH,'//*[@id="financials-period-list"]/li[2]')))
+qtrtab.click()
+time.sleep(10)
 #//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p
 #financials-period-list > li.financials-period-tabs.pointer.active
-driver.execute_script('document.getElementsByClassName("financials-period-tabs").setAttribute("class", "active")')
-qrt_eps = driver.wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p'))).text
-print (yr_eps)
-print (qtr_eps)
+#driver.execute_script('document.getElementsByClassName("financials-period-tabs").setAttribute("class", "active")')
+qrt_eps = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="table-content-area"]/div/div/div[1]/div/ul[30]/li[5]/p'))).get_attribute('innerHTML')
 
-time.sleep(20)
+
+print (price)
+print (yr_eps)
+print (qrt_eps)
 
 
 
